@@ -10,6 +10,21 @@ logfile = /var/log/FAIL!
 logfile = /dev/stdout
 ```
 
+#### handling multi-tenant port mapping
+
+ideally one "app" per docker engine node. helpful tools;
+* [nginx-proxy](https://github.com/jwilder/nginx-proxy)
+* docker swarm
+* manual binds
+```sh
+# print currently bound ports
+$ lsof -i -n  | grep LISTEN
+syncthing 3045 nesta   10u  IPv6  39024      0t0  TCP *:snapenetio (LISTEN)
+syncthing 3045 nesta   16u  IPv4  38161      0t0  TCP 127.0.0.1:http-alt (LISTEN
+
+# map port 8888 on local host to port 80 [nginx listen port] of container
+$ docker run -it --rm -p 8888:80 nginx:1.11
+```
 
 ### understand docker build cache
 
