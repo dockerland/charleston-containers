@@ -1,6 +1,6 @@
 # what is a docker
 
-### Traditional Virtualization
+## Traditional Virtualization
 
 * [Paravirtualization](https://en.wikipedia.org/wiki/Paravirtualization) KVM, Xen, VMWare, Virtualbox
   * extremely secure, _great for hosts_.
@@ -8,32 +8,31 @@
 [AWS EC2](https://aws.amazon.com/) |
 [Mesos](http://mesos.apache.org)
 
-### LXC / Cgroups
+## LXC / Cgroups
 
 VMs without the hypervisor. cgroups (google @2005). Jailed execution environment (Solaris Zones / FreeBDS Jails). Ability to limit resource
 usage.
 
-Concepts:
-  * lightweight -- no hypervisor overhead
-    * supports _many_ more "VMs" per machine
-  * Template driven. Mounted root filesystem.
+#####  more like a chroot (FTP home directory) than a VM
+
+* lightweight -- no hypervisor overhead
+
+##### template driven 
+
+* mounted root filesystem
+
+##### scale-out 
 
 [Proxmox](https://www.proxmox.com/en/) | [Mesos](http://mesos.apache.org)
 
-### Docker
+## Docker
 
-Concepts:
-  * Completely Transparent - Dockerfiles are easy to read, transparent ancestry.
-    ```sh
-    curl https://bitnami.com/redirect/to/137792/bitnami-redis-3.2.6-0-linux-ubuntu-14.04-x86_64.ova?bypassauth=false&fb=1&with_popup_skip_signin=1 > redis-3.2.6.ova
-    vim redis-3.2.6.ova
+The **future**.
 
-    curl https://github.com/docker-library/redis/blob/2e14b84ea86939438834a453090966a9bd4367fb/3.2/Dockerfile > Dockerfile-redis-3.2.6
-    vim Dockerfile-redis-3.2.6
+##### Execute a single process, in the **foreground**. No "guest" OS overhead.
+* Like the LXC template, but limits packaging to _application dependencies_. 
+* consistent runtime; completely portable.
 
-    printf "FROM redis:3.2.6\n#my customizations" > Dockerfile
-    ```
-  * Execute a single process, in the **foreground**. No "guest" OS overhead.
     ```sh
     lxc-start -Fn debian-jessie
     root@debian-test:~# ps -auxw | head -n5
@@ -54,14 +53,50 @@ Concepts:
 
     > **takeaway** this is where the "land of PID:1" comes from, w/ exception of tiny-init being added to docker 1.13
     * 1 nginx container, 1 redis container, 1 phpfrpm container
-  *  docker provides many conveniences for grouping and networking ([docker-compose](https://github.com/docker/compose)), sharing data ([volumes](https://docs.docker.com/engine/tutorials/dockervolumes/)), logging, and resource limiting.
-  * Containers are immutable. Like old school EC2 w/o EBS.
-  * Fast booting -- useful for utilities, e.g. containerized git! [dex](https://github.com/dockerland/dex)
-  * Layered filesystem, know the build-cache
+ 
+
+##### Completely Transparent
+* Dockerfiles are easy to read, and we get transparent ancestry.
+    ```sh
+    curl https://bitnami.com/redirect/to/137792/bitnami-redis-3.2.6-0-linux-ubuntu-14.04-x86_64.ova?bypassauth=false&fb=1&with_popup_skip_signin=1 > redis-3.2.6.ova
+    vim redis-3.2.6.ova
+
+    curl https://github.com/docker-library/redis/blob/2e14b84ea86939438834a453090966a9bd4367fb/3.2/Dockerfile > Dockerfile-redis-3.2.6
+    vim Dockerfile-redis-3.2.6
+
+    printf "FROM redis:3.2.6\n#my customizations" > Dockerfile
+    ```
+
+##### docker provides many conveniences for grouping and networking ([docker-compose](https://github.com/docker/compose)), sharing data ([volumes](https://docs.docker.com/engine/tutorials/dockervolumes/)), logging, and resource limiting.
+
+
+##### Containers are immutable. 
+  * consistent runtime -- completely portable
+  * Like old school EC2 w/o EBS.
+
+##### Fast booting -- useful for utilities, e.g. containerized git! 
+
+  ```sh
+  $ mkdir -p test/{a,b,c}
+  $ time docker run -v $(pwd)/test:/work --workdir=/work ubuntu ls 
+  a
+  b
+  c
+
+  real	0m0.656s
+  user	0m0.023s
+  sys	0m0.017s
+  ```
+
+  [dex](https://github.com/dockerland/dex)
+  * contain your tooling deps! git, npm, even gitk!
+  
+
+##### Layered filesystem, know the build-cache
 
 [Docker Cloud](https://www.docker.com/products/docker-cloud) |[Mesos](http://mesos.apache.org)
 
-##### Dockerfile
+### Dockerfile
 
 * Docker builds images from Dockerfiles.
 * Containers are started from images.
@@ -71,6 +106,7 @@ Concepts:
 
   COPY config.yml /etc/docker/registry/config.yml
   ```
+  
   ```sh
   docker run -p 6379:6379 redis:2.8
   # ^^^ fetches from https://hub.docker.com/_/redis/
@@ -78,6 +114,7 @@ Concepts:
   docker run -p 6379:6379 secret-registry.com/redis:2.8
   # fetches from a private registry (self hosted)
   ```
+  
 * Images may be arbitrarily tagged
   ```sh
   docker build -t test
