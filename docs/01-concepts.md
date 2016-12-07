@@ -16,10 +16,12 @@
   $ bash -c "eval echo \$$"
   16820
   ```
+  
   > **takeaway** this is the reason we `eval` to set DOCKER_HOST using `docker-machine`
   ```sh
   eval $(docker-machine env machine-name)
   ```
+  
 * children inherit the parent environment. **environment variables MUST be exported**.
   ```sh
   $ NAME="goodnight moon"
@@ -43,6 +45,7 @@
 An error occurred trying to connect: Get http://unknown_host:2375/v1.24/containers/json?limit=3: dial tcp: lookup unknown_host: no such host
   # ^^^ yay, break all teh things.
   ```
+  
   > **takeaway** assigning docker-machine persists to subshells/proccesses, but NOT to new shells.
   ```sh
   $ docker-machine env ocean-aaa
