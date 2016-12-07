@@ -17,11 +17,11 @@ usage.
 
 * lightweight -- no hypervisor overhead
 
-##### template driven 
+##### template driven
 
 * mounted root filesystem
 
-##### scale-out 
+##### scale-out
 
 [Proxmox](https://www.proxmox.com/en/) | [Mesos](http://mesos.apache.org)
 
@@ -30,7 +30,7 @@ usage.
 The **future**.
 
 ##### Execute a single process, in the **foreground**. No "guest" OS overhead.
-* Like the LXC template, but limits packaging to _application dependencies_. 
+* Like the LXC template, but limits packaging to _application dependencies_.
 * consistent runtime; completely portable.
 
     ```sh
@@ -53,7 +53,7 @@ The **future**.
 
     > **takeaway** this is where the "land of PID:1" comes from, w/ exception of tiny-init being added to docker 1.13
     * 1 nginx container, 1 redis container, 1 phpfrpm container
- 
+
 
 ##### Completely Transparent
 * Dockerfiles are easy to read, and we get transparent ancestry.
@@ -70,15 +70,15 @@ The **future**.
 ##### docker provides many conveniences for grouping and networking ([docker-compose](https://github.com/docker/compose)), sharing data ([volumes](https://docs.docker.com/engine/tutorials/dockervolumes/)), logging, and resource limiting.
 
 
-##### Containers are immutable. 
+##### Containers are immutable.
   * consistent runtime -- completely portable
   * Like old school EC2 w/o EBS.
 
-##### Fast booting -- useful for utilities, e.g. containerized git! 
+##### Fast booting -- useful for utilities, e.g. containerized git!
 
   ```sh
   $ mkdir -p test/{a,b,c}
-  $ time docker run -v $(pwd)/test:/work --workdir=/work ubuntu ls 
+  $ time docker run -v $(pwd)/test:/work --workdir=/work ubuntu ls
   a
   b
   c
@@ -90,7 +90,7 @@ The **future**.
 
   [dex](https://github.com/dockerland/dex)
   * contain your tooling deps! git, npm, even gitk!
-  
+
 
 ##### Layered filesystem, know the build-cache
 
@@ -106,7 +106,7 @@ The **future**.
 
   COPY config.yml /etc/docker/registry/config.yml
   ```
-  
+
   ```sh
   docker run -p 6379:6379 redis:2.8
   # ^^^ fetches from https://hub.docker.com/_/redis/
@@ -114,7 +114,8 @@ The **future**.
   docker run -p 6379:6379 secret-registry.com/redis:2.8
   # fetches from a private registry (self hosted)
   ```
-  
+    * Docker provides "OFFICIAL" repositories https://hub.docker.com/explore/
+
 * Images may be arbitrarily tagged
   ```sh
   docker build -t test
