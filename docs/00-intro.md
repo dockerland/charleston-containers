@@ -3,7 +3,7 @@
 ### Traditional Virtualization
 
 * [Paravirtualization](https://en.wikipedia.org/wiki/Paravirtualization) KVM, Xen, VMWare, Virtualbox
-  * extremely secure, great for hosts.
+  * extremely secure, _great for hosts_.
 
 [AWS EC2](https://aws.amazon.com/) |
 [Mesos](http://mesos.apache.org)
@@ -23,18 +23,67 @@ Concepts:
 ### Docker
 
 Concepts:
-  * Run a single process in the foreground, no "guest OS" overhead.
+  * Completely Transparent - Dockerfiles are easy to read, transparent ancestry.
+    ```sh
+    curl https://bitnami.com/redirect/to/137792/bitnami-redis-3.2.6-0-linux-ubuntu-14.04-x86_64.ova?bypassauth=false&fb=1&with_popup_skip_signin=1 > redis-3.2.6.ova
+    vim redis-3.2.6.ova
+
+    curl https://github.com/docker-library/redis/blob/2e14b84ea86939438834a453090966a9bd4367fb/3.2/Dockerfile > Dockerfile-redis-3.2.6
+    vim Dockerfile-redis-3.2.6
+
+    printf "FROM redis:3.2.6\n#my customizations" > Dockerfile
+    ```
+  * Execute a single process, in the **foreground**. No "guest" OS overhead.
+    ```sh
+    lxc-start -Fn debian-jessie
+    root@debian-test:~# ps -auxw | head -n5
+    USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+    root         1  0.0  0.1  28124  4220 ?        Ss   22:23   0:00 /sbin/init
+    root        16  0.0  0.0  32968  3188 ?        Ss   22:23   0:00 /lib/systemd/systemd-journald
+    root        65  0.0  0.1  55184  5476 ?        Ss   22:23   0:00 /usr/sbin/sshd -D
+    root        69  0.0  0.0  12664  1772 tty1     Ss+  22:23   0:00 /sbin/agetty --noclear tty1 linux
+    ```
+    ```sh
+    $ docker run -it --rm debian:jessie sh -c "ls ; ps -auxw"
+    bin   dev  home  lib64	mnt  proc  run	 srv  tmp  var
+    boot  etc  lib	 media	opt  root  sbin  sys  usr
+    USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+    root         1  0.0  0.0   4336   748 ?        Ss+  22:26   0:00 sh -c ls ; ps -auxw
+    root         8  0.0  0.0  17500  2080 ?        R+   22:26   0:00 ps -auxw
+    ```
+
+    > **takeaway** this is where the "land of PID:1" comes from, w/ exception of tiny-init being added to docker 1.13
     * 1 nginx container, 1 redis container, 1 phpfrpm container
-    *  docker provides many conveniences for grouping and networking ([docker-compose](https://github.com/docker/compose)), sharing data ([volumes](https://docs.docker.com/engine/tutorials/dockervolumes/)), logging, and resource limiting.
+  *  docker provides many conveniences for grouping and networking ([docker-compose](https://github.com/docker/compose)), sharing data ([volumes](https://docs.docker.com/engine/tutorials/dockervolumes/)), logging, and resource limiting.
   * Containers are immutable. Like old school EC2 w/o EBS.
   * Fast booting -- useful for utilities, e.g. containerized git! [dex](https://github.com/dockerland/dex)
-  * Layered filesystem
+  * Layered filesystem, know the build-cache
 
 [Docker Cloud](https://www.docker.com/products/docker-cloud) |[Mesos](http://mesos.apache.org)
 
 ##### Dockerfile
 
-* Dockerfile
-  * docker image
-  * registry
-    * tag demo
+* Docker builds images from Dockerfiles.
+* Containers are started from images.
+* Images are published to registry. Registries may be self hosted using the "Registry Image"
+  ```sh
+  FROM registry:2
+
+  COPY config.yml /etc/docker/registry/config.yml
+  ```
+  ```sh
+  docker run -p 6379:6379 redis:2.8
+  # ^^^ fetches from https://hub.docker.com/_/redis/
+
+  docker run -p 6379:6379 secret-registry.com/redis:2.8
+  # fetches from a private registry (self hosted)
+  ```
+* Images may be arbitrarily tagged
+  ```sh
+  docker build -t test
+  docker tag test secret-registry.com/redis:2.8
+  docker run secret-registry.com/redis:2.8
+  # ^^^ runs local
+  docker pull secret-registry.com/redis:2.8 && docker run secret-registry.com/redis:2.8
+  # ^^^ pulls from registry
+  ```
