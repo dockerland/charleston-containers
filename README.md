@@ -1,5 +1,7 @@
 # Charleston Containers
 
+[![Join the chat at https://gitter.im/dockerland/charleston-containers](https://badges.gitter.im/dockerland/charleston-containers.svg)](https://gitter.im/dockerland/charleston-containers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ![lapty logo](art/lapty/cc_medium.png)
 
 ---
