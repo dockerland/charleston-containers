@@ -1,0 +1,42 @@
+---
+
+#
+# reverse-proxy with auto-configuration of web containers + letsencrypt SSL
+#
+
+traefik:
+  image: traefik
+  command: --web --docker --docker.domain=cc.dockerland.org --logLevel=DEBUG
+  restart: always
+  ports:
+    - "80:80"
+    - "443:443"
+    - "8080:8080"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - /dev/null:/traefik.toml
+
+#
+# application containers (usually in a different composition)
+#
+
+whoami:
+  image: emilevauge/whoami
+  labels:
+    - "traefik.frontend.rule=Host:whoami.cc.dockerland.org"
+
+# demo EXPOSE on port other than 80
+docs:
+  build: .
+  dockerfile: Dockerfile-docker-docs
+  labels:
+    - "traefik.port=4000"
+    - "traefik.frontend.rule=Host:docs.cc.dockerland.org"
+
+files:
+  build: .
+  dockerfile: Dockerfile-caddy-file-server
+  labels:
+    - "traefik.frontend.rule=Host:docs.cc.dockerland.org"
+  volumes:
+    - "/docker-volumes/cc/files:/srv:ro"

@@ -1,0 +1,3 @@
+FROM abiosoft/caddy
+
+# copy files to /srv to serve under them.
