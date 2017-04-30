@@ -3,8 +3,16 @@
 * No secret should be written to disk in cleartext — ever
 * No secret should be transmitted over a network in cleartext — ever
 * All secret lifecycle and access events should be recorded in an incorruptible audit log
-* Nonce secrets should be utilized if possible
-* Secret versioning or rolling should be easier to accomplish than revealing cleartext
+* utilize nonce secrets if possible (e.g. secret engine creates one-time use keys for authenticating to a server - see [vault-ssh-helper](https://github.com/hashicorp/vault-ssh-helper))
+
+* application to access secrets through filesystem;
+```js
+token = process.env['SECRET_TOKEN'];
+```
+becomes
+```js
+token = fs.readFileSync('/secrets/token');
+```
 
 
 ### standalone
