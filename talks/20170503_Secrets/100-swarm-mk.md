@@ -73,8 +73,7 @@ docker-machine ssh local-swarm-manager \
 export MACHINE_STORAGE_PATH=~/.docker-swarms/local
 
 # fetch the join token from manager
-join_token="$(docker-machine ssh local-swarm-manager \
-  docker swarm join-token worker -q )"
+join_token="$(docker-machine ssh local-swarm-manager docker swarm join-token worker -q )"
 join_ip="$(docker-machine ip local-swarm-manager)"
 
 # create worker nodes a, b, and c
