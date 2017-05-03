@@ -82,7 +82,7 @@ for name in local-swarm-worker-{a..c}; do
   docker-machine create -d kvm $name &&\
   docker-machine ssh $name \
     docker swarm join --token "$join_token" "$join_ip" &&\
-  echo -e "\e[1m$name\e[21m joined the swarm!"
+  echo -e "\e[1m$name\e[21m joined the swarm"
 done
 ```
 
