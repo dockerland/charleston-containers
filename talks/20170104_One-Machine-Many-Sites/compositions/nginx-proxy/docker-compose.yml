@@ -1,0 +1,43 @@
+---
+
+#
+# reverse-proxy with auto-configuration of web containers + letsencrypt SSL
+#
+
+nginx_proxy:
+  container_name: machine-nginx-proxy
+  restart: always
+  image: jwilder/nginx-proxy
+  ports:
+    - "80:80"
+    - "443:443"
+
+  volumes:
+    - /etc/nginx/conf.d
+    - /usr/share/nginx/html
+    - /etc/nginx/certs:/etc/nginx/certs:ro
+    - /etc/nginx/vhost.d:/etc/nginx/vhost.d:ro
+    - /etc/nginx/htpasswd:/etc/nginx/htpasswd:ro
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+
+nginx_letsencrypt:
+  container_name: machine-nginx-letsencrypt
+  restart: always
+  image: jrcs/letsencrypt-nginx-proxy-companion
+  links:
+    - nginx_proxy
+  volumes_from:
+    - nginx_proxy
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - /etc/nginx/certs:/etc/nginx/certs:rw
+    - /etc/nginx/vhost.d:/etc/nginx/vhost.d:rw
+
+#
+# application containers (usually in a different composition)
+#
+
+whoami:
+  image: emilevauge/whoami
+  environment:
+    VIRTUAL_HOST: "whoami.cc.dockerland.org"

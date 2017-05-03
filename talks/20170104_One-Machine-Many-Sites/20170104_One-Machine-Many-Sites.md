@@ -80,8 +80,8 @@ Lets host a mirror of the official [Docker Documentation](https://github.com/doc
 
 ```sh
 cd $(mktemp -d 2>/dev/null || mktemp -d -t 'darwin')
-curl -L https://raw.githubusercontent.com/docker/docker.github.io/master/Dockerfile > Dockerfile
-
+curl -L https://raw.githubusercontent.com/dockerland/charleston-containers/master/talks/20170104_One-Machine-Many-Sites/compositions/traefik/Dockerfile-docker-docs \
+  > Dockerfile
 
 docker build -t docker-docs .
 
@@ -101,22 +101,23 @@ docker run --rm -p 8080:80 -v $(pwd):/srv caddy-fs
 
 # pick a reverse proxy
 
-This is a fun one. Bear in mind the web is basically tied to ports 80 (plaintext) and 443 (encrypted TLS/SSL). 80 is used by http:// and 443 is used by https://, and we usually
-have nginx or apache listening on these ports, and we usually set write server/virtualhost
-definitions, and we usually spend a lot of time maintaining them.
+This is a fun one.
 
-Don't you think it would be great if we start a "web" container, and configuration is automatically made for it? No need to supply a definition?
+Consider only one process can be bound to a port and the web is tied to ports 80 (http:// plaintext) and 443 (https:// TLS/SSL). We usually
+have nginx or apache listening on these ports, and we usually use write virtualhost definitions for each site, and we usually spend time maintaining them.
 
-Now consider that a port allows only one process to be bound to it. So we can
-only run one application at a time on port 80. This is limited, and we want
-to run _many_ containerized sites, so a reverse proxy is needed. And we actually
-have choices that;
+Don't you think it would be great if we start a "web" container, and configuration is automatically made for it? No need to worry about virtualhost definitions?
+
+We want to have multiple containerized sites/applications available on the web ports, so a reverse proxy is needed. Lets choose one that will;
 
   * listen to the docker socket and automatically create configuration for web containers
   * provide super helpful additions such as free SSL certificates and management.
 
 
-At BlueAcorn we use [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) + [letsencrypt-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion). https://caddyserver.com [BlackGlory/caddy-proxy](https://github.com/BlackGlory/caddy-proxy) is a similar (docker-gen) based image that uses caddy. For this demo, lets try to use [traefik](https://traefik.io/). It gives us what we need PLUS a pretty control panel. It also has an official image on docker hub.
+At BlueAcorn we use [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) + [letsencrypt-companion](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion).  [BlackGlory/caddy-proxy](https://github.com/BlackGlory/caddy-proxy) is a similar (docker-gen) based image that uses [caddy](https://caddyserver.com/). Examples for each are provided in [compositions/](compositions/)
+
+
+For this demo, lets try to use [traefik](https://traefik.io/). It gives us what we need PLUS a pretty control panel. It also has an official image on docker hub.
 
 
 ```

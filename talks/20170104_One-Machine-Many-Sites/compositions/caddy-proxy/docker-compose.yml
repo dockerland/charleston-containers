@@ -1,0 +1,25 @@
+---
+
+#
+# reverse-proxy with auto-configuration of web containers + letsencrypt SSL
+#
+
+caddy_proxy:
+  restart: always
+  image: blackglory/caddy-proxy:0.2.1
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock:ro
+  environment:
+    CADDY_OPTIONS: "--email youremail@example.com"
+
+#
+# application containers (usually in a different composition)
+#
+
+whoami:
+  image: emilevauge/whoami
+  environment:
+    VIRTUAL_HOST: "whoami.cc.dockerland.org"
