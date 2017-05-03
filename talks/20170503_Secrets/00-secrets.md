@@ -1,4 +1,13 @@
-## secret best practices
+# secrets
+
+![whisper](http://3.bp.blogspot.com/_Pqpmm2T6j4g/Se157ygAT2I/AAAAAAAAHmA/BBWkN0IFZoM/s400/Secret.jpg)
+
+When leaked, there's oogle eyes.
+
+
+## overview
+
+### best practices
 
 * No secret should be written to disk in cleartext — ever
 * No secret should be transmitted over a network in cleartext — ever
@@ -16,21 +25,20 @@ becomes
 * version and namespace secrets for easier rotations and a maintainable lifecycle; `acme-SECRET-v1` gets mounted as `.../acme-SECRET`
 
 
+### secret tools
 
-### standalone
+#### standalone
 
 * https://github.com/square/keywhiz
 * https://github.com/hashicorp/vault
+* https://github.com/codahale/sneaker
 
-### infrastructure
+#### infrastructure
 
 * [swarm](swarm.md) - https://docs.docker.com/engine/swarm/secrets/
 * https://docs.mesosphere.com/1.8/administration/secrets/
+* https://kubernetes.io/docs/concepts/configuration/secret/
 * https://docs.rancher.com/rancher/v1.4/en/cattle/secrets/
 
 
-
-#### container
-
-* [build vs. runtime](build-vs-runtime.md)
-*
+Lets look at the difference between build and runtime secrets.
